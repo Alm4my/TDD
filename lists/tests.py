@@ -12,11 +12,5 @@ class HomePageTest(TestCase):
 
     def test_home_page_returns_correct_html(self):
         response = self.client.get('/')
-
-        html = response.content.decode('utf-8')
-        self.assertTrue(html.startswith('<html lang="en">'))
-        self.assertIn('<title>To-Do lists</title>', html)
-        self.assertTrue(html.endswith('</html>'))
-
         self.assertTemplateUsed(response, 'home.html')
 
