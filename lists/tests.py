@@ -5,7 +5,7 @@ from lists.views import home_page
 
 
 # Create your tests here.
-class SmokeTest(TestCase):
+class HomePageTest(TestCase):
 
     def test_root_url_resolves_to_home_page_view(self):
         found = resolve('/')
