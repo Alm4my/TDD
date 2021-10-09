@@ -54,14 +54,25 @@ class NewVisitorTest(unittest.TestCase):
 
         # There is still a text box inviting him to add another item. He
         # enters "Use Burger's ketchup to make a soup"
-        self.fail('Finish the test!')
+        input_box = self.browser.find_element_by_id('id_new_item')
+        input_box.send_keys("Use Burger's ketchup to make a soup")
+        input_box.send_keys(Keys.ENTER)
+        time.sleep(2)
 
         # The page updates again, and now shows both items on his list
+        self.assertIn(
+            "2: Use Burger's ketchup to make a soup",
+            [row.text for row in rows]
+        )
+        self.assertTrue(
+            any(row.text == "2: Use Burger's ketchup to make a soup" for row in rows),
+            f"New to-do item did not appear in table. Contents were:\n{table.text}"
+        )
 
         # Mark wonders whether the site will remember his list. Then he sees
         # that the site has generated a unique URL for him -- there is some
         # explanatory text to that effect
-
+        self.fail('Finish the Test')
         # He visits that URL - his to-do list is still there.
 
         # Satisfied, he goes back to sleep
