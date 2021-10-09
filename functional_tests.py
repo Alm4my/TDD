@@ -29,26 +29,27 @@ class NewVisitorTest(unittest.TestCase):
         header_text = self.browser.find_element_by_tag_name('h1').text
         self.assertIn('To-Do', header_text)
 
-        # he is invited to enter a to-do item straight away
+        # He is invited to enter a to-do item straight away
         input_box = self.browser.find_element_by_id('id_new_item')
         self.assertEqual(
             input_box.get_attribute('placeholder'),
             'Enter a to-do item'
         )
 
-        # he types "Buy a Burger" into a text box
+        # He types "Buy a Burger" into a text box
         input_box.send_keys('Buy a Burger')
 
         # When he hits enter, the page updates, and now the page lists
         # "1: Buy a Burger" as an item in a to-do list
         input_box.send_keys(Keys.ENTER)
-        time.sleep(1)       # Explicit wait to make sure the browser has finish loading
+        time.sleep(3)       # Explicit wait to make sure the browser has finish loading
 
         table = self.browser.find_element_by_id('id_list_table')
         rows = table.find_elements_by_tag_name('tr')
+        self.assertIn('1: Buy a Burger', [row.text for row in rows])
         self.assertTrue(
             any(row.text == '1: Buy a Burger' for row in rows),
-            "New to-do item did not appear in table"
+            f"New to-do item did not appear in table. Contents were:\n{table.text}"
         )
 
         # There is still a text box inviting him to add another item. He
