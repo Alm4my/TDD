@@ -75,5 +75,43 @@ class NewVisitorTest(LiveServerTestCase):
 
         # Satisfied, he goes back to sleep
 
+    def test_multiple_users_can_start_lists_at_different_urls(self):
+        # Mark starts a new to-do list
+        self.browser.get(self.live_server_url)
+        input_box = self.browser.find_element_by_id('id_new_item')
+        input_box.send_keys('Buy rooster tail')
+        input_box.send_keys(Keys.ENTER)
+        self.wait_for_row_in_list_table('1: Buy rooster tail')
 
+        input_box = self.browser.find_element_by_id('id_new_item')
+        input_box.send_keys('Make a tail hat')
+        input_box.send_keys(Keys.ENTER)
+        self.wait_for_row_in_list_table('2: Make a tail hat')
 
+        # He notices that her list has a unique URL
+        mark_list_url = self.browser.current_url
+        self.assertRegex(mark_list_url, r'/lists/.+')
+
+        # Now a new user, Jane, comes along to the site
+        # ->  We use a new browser session to make sure that no information
+        # ->  of Mark's is coming through from cookies
+        self.browser.quit()
+        self.browser = webdriver.Firefox()
+
+        # Jane visits the home page. There is no sign of Mark's list
+        self.browser.get(self.live_server_url)
+        page_text = self.browser.find_element_by_tag_name('body').text
+        self.assertNotIn('Buy rooster tail', page_text)
+        self.assertNotIn('Make a tail hat', page_text)
+
+        # Jane starts a new list by entering a new item
+        input_box = self.browser.find_element_by_tag_name('id_new_item')
+        input_box.send_keys('Buy Milk')
+        input_box.send_keys(Keys.ENTER)
+        self.wait_for_row_in_list_table('1: Buy Milk')
+
+        # Jane gets her own unique URL
+        jane_list_url = self.browser.current_url
+        self.assertRegex(jane_list_url, '/lists/.+')
+
+        # Satisfied, they both go back to sleep
