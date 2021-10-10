@@ -2,15 +2,13 @@
 # Tracks user story. Follows how the user might work with a particular feature
 # and how the app should respond to them.
 # They should contain the user story
+from django.test import LiveServerTestCase
+from selenium import webdriver
+from selenium.webdriver.common.keys import Keys
 import time
 
-from selenium import webdriver
-import unittest
 
-from selenium.webdriver.common.keys import Keys
-
-
-class NewVisitorTest(unittest.TestCase):
+class NewVisitorTest(LiveServerTestCase):
 
     def setUp(self) -> None:
         self.browser = webdriver.Firefox()
@@ -32,7 +30,7 @@ class NewVisitorTest(unittest.TestCase):
     def test_can_start_a_list_and_retrieve_it_later(self):
         # Mark has heard about a cool new online to-do app. He goes to check out
         # its homepage.
-        self.browser.get('http://localhost:8000')
+        self.browser.get(self.live_server_url)
 
         # He notices the page title and header mention to-do lists
         self.assertIn('To-Do', self.browser.title)
@@ -53,7 +51,7 @@ class NewVisitorTest(unittest.TestCase):
         # When he hits enter, the page updates, and now the page lists
         # "1: Buy a Burger" as an item in a to-do list
         input_box.send_keys(Keys.ENTER)
-        time.sleep(3)       # Explicit wait to make sure the browser has finish loading
+        time.sleep(2)       # Explicit wait to make sure the browser has finish loading
         self.check_for_row_in_list_table('1: Buy a Burger')
 
         # There is still a text box inviting him to add another item. He
@@ -76,5 +74,4 @@ class NewVisitorTest(unittest.TestCase):
         # Satisfied, he goes back to sleep
 
 
-if __name__ == '__main__':
-    unittest.main(warnings='ignore')
+
