@@ -18,6 +18,17 @@ class NewVisitorTest(unittest.TestCase):
     def tearDown(self) -> None:
         self.browser.quit()
 
+    def check_for_row_in_list_table(self, row_text):
+        table = self.browser.find_element_by_id('id_list_table')
+        rows = table.find_elements_by_tag_name('tr')
+        self.assertIn(row_text, [row.text for row in rows])
+
+        # Unnecessary, but shows another way of doing it
+        self.assertTrue(
+            any(row.text == row_text for row in rows),
+            f"New to-do item did not appear in table. Contents were:\n{table.text}"
+        )
+
     def test_can_start_a_list_and_retrieve_it_later(self):
         # Mark has heard about a cool new online to-do app. He goes to check out
         # its homepage.
@@ -43,14 +54,7 @@ class NewVisitorTest(unittest.TestCase):
         # "1: Buy a Burger" as an item in a to-do list
         input_box.send_keys(Keys.ENTER)
         time.sleep(3)       # Explicit wait to make sure the browser has finish loading
-
-        table = self.browser.find_element_by_id('id_list_table')
-        rows = table.find_elements_by_tag_name('tr')
-        self.assertIn('1: Buy a Burger', [row.text for row in rows])
-        self.assertTrue(
-            any(row.text == '1: Buy a Burger' for row in rows),
-            f"New to-do item did not appear in table. Contents were:\n{table.text}"
-        )
+        self.check_for_row_in_list_table('1: Buy a Burger')
 
         # There is still a text box inviting him to add another item. He
         # enters "Use Burger's ketchup to make a soup"
@@ -60,14 +64,8 @@ class NewVisitorTest(unittest.TestCase):
         time.sleep(2)
 
         # The page updates again, and now shows both items on his list
-        self.assertIn(
-            "2: Use Burger's ketchup to make a soup",
-            [row.text for row in rows]
-        )
-        self.assertTrue(
-            any(row.text == "2: Use Burger's ketchup to make a soup" for row in rows),
-            f"New to-do item did not appear in table. Contents were:\n{table.text}"
-        )
+        self.check_for_row_in_list_table('1: Buy a Burger')
+        self.check_for_row_in_list_table("2: Use Burger's ketchup to make a soup")
 
         # Mark wonders whether the site will remember his list. Then he sees
         # that the site has generated a unique URL for him -- there is some
