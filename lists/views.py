@@ -8,7 +8,7 @@ def home_page(request):
     if request.method == 'POST':
         new_item_text = request.POST['item_text']
         Item.objects.create(text=new_item_text)
-        return redirect('/')
+        return redirect('/lists/the-only-list-in-the-app/')
 
     items = Item.objects.all()
     return render(
@@ -16,3 +16,8 @@ def home_page(request):
         'home.html',
         {'items': items}
     )
+
+
+def view_list(request):
+    items = Item.objects.all()
+    return render(request, 'home.html', {'items': items})
