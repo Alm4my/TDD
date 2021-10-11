@@ -31,6 +31,29 @@ class NewVisitorTest(LiveServerTestCase):
                     raise e
                 time.sleep(.5)
 
+    def test_layout_and_styling(self):
+        # Mark goes to the home page
+        self.browser.get(self.live_server_url)
+        self.browser.set_window_size(1024, 768)
+
+        # He notices the input box is nicely centered
+        input_box = self.browser.find_element_by_id('id_new_item')
+        self.assertAlmostEqual(
+            input_box.location['x'] + input_box.size['width'] / 2,
+            512,
+            delta=10
+        )
+
+        # He starts a new list and sees the input nicely centered there too
+        input_box.send_keys('Testing')
+        self.wait_for_row_in_list_table('1: Testing')
+        input_box = self.browser.find_element_by_id('id_new_item')
+        self.assertAlmostEqual(
+            input_box.location['x'] + input_box.size['width'] / 2,
+            512,
+            delta=10
+        )
+
     def test_can_start_a_list_and_retrieve_it_later(self):
         # Mark has heard about a cool new online to-do app. He goes to check out
         # its homepage.
