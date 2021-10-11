@@ -2,14 +2,15 @@
 # Tracks user story. Follows how the user might work with a particular feature
 # and how the app should respond to them.
 # They should contain the user story
-from django.test import LiveServerTestCase
+import time
+
+from django.contrib.staticfiles.testing import StaticLiveServerTestCase
 from selenium import webdriver
 from selenium.common.exceptions import WebDriverException
 from selenium.webdriver.common.keys import Keys
-import time
 
 
-class NewVisitorTest(LiveServerTestCase):
+class NewVisitorTest(StaticLiveServerTestCase):
     MAX_WAIT = 5
 
     def setUp(self) -> None:
