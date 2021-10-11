@@ -2,6 +2,7 @@
 # Tracks user story. Follows how the user might work with a particular feature
 # and how the app should respond to them.
 # They should contain the user story
+import os
 import time
 
 from django.contrib.staticfiles.testing import StaticLiveServerTestCase
@@ -15,6 +16,9 @@ class NewVisitorTest(StaticLiveServerTestCase):
 
     def setUp(self) -> None:
         self.browser = webdriver.Firefox()
+        staging_server = os.environ.get('STAGING_SERVER')
+        if staging_server:
+            self.live_server_url = 'http://' + staging_server
 
     def tearDown(self) -> None:
         self.browser.quit()
@@ -47,6 +51,7 @@ class NewVisitorTest(StaticLiveServerTestCase):
 
         # He starts a new list and sees the input nicely centered there too
         input_box.send_keys('Testing')
+        input_box.send_keys(Keys.ENTER)
         self.wait_for_row_in_list_table('1: Testing')
         input_box = self.browser.find_element_by_id('id_new_item')
         self.assertAlmostEqual(
@@ -94,7 +99,9 @@ class NewVisitorTest(StaticLiveServerTestCase):
         # Mark wonders whether the site will remember his list. Then he sees
         # that the site has generated a unique URL for him -- there is some
         # explanatory text to that effect
-        self.fail('Finish the Test')
+
+        # self.fail('Finish the Test')
+
         # He visits that URL - his to-do list is still there.
 
         # Satisfied, he goes back to sleep
